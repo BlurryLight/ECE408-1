@@ -4,9 +4,10 @@
 # <author>  yuanxiulong 			</author>
 # <email>   yuanxl19@mails.tsinghua.edu.cn	</email>
 ############################################################################################
-project(ECE408)
-cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
+project(ECE408 C CXX CUDA)
 find_package(CUDA REQUIRED)
+set(CMAKE_CUDA_STANDARD 17)
 # collect source files
 
 if(CUDA_FOUND)
@@ -14,11 +15,9 @@ if(CUDA_FOUND)
     # whether to build x64.  We tell it to support most devices, though, 
     # to make sure more people can easily run class code without knowing 
     # about this compiler argument
-    if (MSVC)
-        set(CUDA_NVCC_FLAGS "")
-    else (MSVC)
-        set(CUDA_NVCC_FLAGS "-gencode;arch=compute_86,code=sm_86;")
-    endif (MSVC)
+    if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
+        set(CMAKE_CUDA_ARCHITECTURES 75)
+    endif()
 
     # add -Wextra compiler flag for gcc compilations
     if (UNIX)
@@ -53,14 +52,16 @@ include_directories("lib/")
 
 
 # Add Implementation Code
-CUDA_ADD_EXECUTABLE(MP1_Implement mp1_implement.cu ${wbhdr} ${wbsrc})
-CUDA_ADD_EXECUTABLE(MP2_Implement mp2_implement.cu ${wbhdr} ${wbsrc})
-CUDA_ADD_EXECUTABLE(MP3_Implement mp3_implement.cu ${wbhdr} ${wbsrc})
-CUDA_ADD_EXECUTABLE(MP4_Implement mp4_implement.cu ${wbhdr} ${wbsrc})
-CUDA_ADD_EXECUTABLE(MP5_Implement mp5_implement.cu ${wbhdr} ${wbsrc})
-CUDA_ADD_EXECUTABLE(MP6_Implement mp6_implement.cu ${wbhdr} ${wbsrc})
-CUDA_ADD_EXECUTABLE(MP7_Implement mp7_implement.cu ${wbhdr} ${wbsrc})
-CUDA_ADD_EXECUTABLE(MP8_Implement mp8_implement.cu ${wbhdr} ${wbsrc})
+CUDA_ADD_EXECUTABLE(HelloWorld hello_world.cu)
+CUDA_ADD_EXECUTABLE(MP0_DeviceQuery my_implementation/mp0_my_impl.cu  ${wbhdr} ${wbsrc})
+CUDA_ADD_EXECUTABLE(MP1_Implement my_implementation/mp1_my_impl.cu ${wbhdr} ${wbsrc})
+CUDA_ADD_EXECUTABLE(MP2_Implement my_implementation/mp2_my_impl.cu ${wbhdr} ${wbsrc})
+CUDA_ADD_EXECUTABLE(MP3_Implement my_implementation/mp3_my_impl.cu ${wbhdr} ${wbsrc})
+CUDA_ADD_EXECUTABLE(MP4_Implement my_implementation/mp4_my_impl.cu ${wbhdr} ${wbsrc})
+CUDA_ADD_EXECUTABLE(MP5_Implement my_implementation/mp5_my_impl.cu ${wbhdr} ${wbsrc})
+CUDA_ADD_EXECUTABLE(MP6_Implement my_implementation/mp6_my_impl.cu ${wbhdr} ${wbsrc})
+CUDA_ADD_EXECUTABLE(MP7_Implement my_implementation/mp7_my_impl.cu ${wbhdr} ${wbsrc})
+CUDA_ADD_EXECUTABLE(MP8_Implement my_implementation/mp8_my_impl.cu ${wbhdr} ${wbsrc})
 #Add Tools
 CUDA_ADD_EXECUTABLE(MP1_Dataset tools/mp1_dataset.cpp ${wbhdr} ${wbsrc})
 CUDA_ADD_EXECUTABLE(MP2_Dataset tools/mp2_dataset.cpp ${wbhdr} ${wbsrc})
