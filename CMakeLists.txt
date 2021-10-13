@@ -6,8 +6,10 @@
 ############################################################################################
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(ECE408 C CXX CUDA)
+cmake_policy(SET CMP0104 OLD)
 find_package(CUDA REQUIRED)
 set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
 # collect source files
 
 if(CUDA_FOUND)
@@ -15,14 +17,22 @@ if(CUDA_FOUND)
     # whether to build x64.  We tell it to support most devices, though, 
     # to make sure more people can easily run class code without knowing 
     # about this compiler argument
-    if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
-        set(CMAKE_CUDA_ARCHITECTURES 75)
-    endif()
+  
+# https://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/
+    # set(CUDA_NVCC_FLAGS "-gencode;arch=compute_50,code=sm_50;arch=compute_50,code=sm_50")
+    if(MSVC)
+        set(CUDA_NVCC_FLAGS "")
+    else(MSVC)
+        cuda_select_nvcc_arch_flags(ARCH_FLAGS 5.0)
+        list(APPEND CUDA_NVCC_FLAGS ${ARCH_FLAGS})
+        cuda_select_nvcc_arch_flags(ARCH_FLAGS 7.5)
+        list(APPEND CUDA_NVCC_FLAGS ${ARCH_FLAGS})
+    endif(MSVC)
 
     # add -Wextra compiler flag for gcc compilations
     if (UNIX)
-        set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "-Xcompiler -Wall;")
-        set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "-Xcompiler -Wextra")
+        set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} " -Xcompiler -Wall;")
+        set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} " -Xcompiler -Wextra")
     endif (UNIX)
 
     # add debugging to CUDA NVCC flags.  For NVidia's NSight tools.

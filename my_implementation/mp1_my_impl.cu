@@ -44,12 +44,12 @@ int main(int argc, char ** argv) {
     
     //@@ Initialize the grid and block dimensions here
 
-    int nBlock = (int)std::ceil(inputLength / 256.0);
+    int nBlock = (int)std::ceil(inputLength / 32.0);
     wbTime_start(Compute, "Performing CUDA computation");
     //@@ Launch the GPU Kernel here
-    vecAdd<<<nBlock,256>>>(deviceInput1,deviceInput2,deviceOutput,inputLength);
+    vecAdd<<<nBlock,32>>>(deviceInput1,deviceInput2,deviceOutput,inputLength);
 
-    cudaThreadSynchronize();
+    cudaDeviceSynchronize();
     wbTime_stop(Compute, "Performing CUDA computation");
     
     wbTime_start(Copy, "Copying output memory to the CPU");
